@@ -1,4 +1,4 @@
-package batch.springbatch.test
+package batch.springbatch.job
 
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -14,23 +14,24 @@ import org.springframework.context.annotation.Configuration
  * @author Rasung Ki
  */
 @Configuration
-class TestConfiguration(
-    val jobBuilderFactory: JobBuilderFactory,
-    val stepBuilderFactory: StepBuilderFactory
+class ParameterConfiguration(
+    private val jobBuilderFactory: JobBuilderFactory,
+    private val stepBuilderFactory: StepBuilderFactory
 ) {
     @Bean
-    fun job(): Job {
-        return jobBuilderFactory.get("job")
-            .start(step())
+    fun basicJob(): Job {
+        return jobBuilderFactory.get("basicJob")
+            .start(basicStep())
             .build()
     }
 
     @Bean
-    fun step(): Step {
-        return stepBuilderFactory.get("step1")
-            // Tasklet을 구현하면 스텝이 중지 될때까지 execute메서드가 계속 수행
-            .tasklet { _: StepContribution, _: ChunkContext ->
-                println("Hello World")
+    fun basicStep(): Step {
+        return stepBuilderFactory.get("basicStep")
+            .tasklet {_: StepContribution, chunkContext: ChunkContext ->
+                val name = chunkContext.stepContext.jobParameters["name"]
+
+                println("Hello $name")
                 RepeatStatus.FINISHED
             }.build()
     }
