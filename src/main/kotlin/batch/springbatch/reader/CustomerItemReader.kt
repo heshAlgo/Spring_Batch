@@ -12,6 +12,7 @@ class CustomerItemReader : ItemReader<Customer> {
     private val itemList = mutableListOf<Customer>().also {
         for (index in 1..10000) {
             it.add(Customer(index, "#${index} 홍길동"))
+            println("test testetstste ")
         }
     }
 
