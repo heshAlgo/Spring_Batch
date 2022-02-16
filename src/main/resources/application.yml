@@ -6,9 +6,9 @@ spring:
     url: jdbc:mysql://localhost:3306/test_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&autoReconnect=true
     username: root
     password: root
-  main:
-    allow-bean-definition-overriding: true
-# job parameter 지정 가능
-  batch:
-    job:
-      names: ${job.name:NONE}
+#  main:
+#    allow-bean-definition-overriding: true
+## job parameter 지정 가능
+#  batch:
+#    job:
+#      names: ${job.name:NONE}
