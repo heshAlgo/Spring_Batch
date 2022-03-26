@@ -3,15 +3,15 @@ spring:
     active: local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/test_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&autoReconnect=true
+    url: jdbc:mysql://localhost:3306/sys?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&autoReconnect=true
     username: root
     password: root
 #  main:
 #    allow-bean-definition-overriding: true
-## job parameter 지정 가능
-#  batch:
-#    job:
-#      names: ${job.name:NONE}
+
   batch:
     job:
-      enabled: false
+      # 내가 실행할 Job 지정
+      names: ${job.name:NONE}
+      # false로 설정시 배치가 자동으로 실행되는것을 막을수 있음 (Default : true)
+      enabled: true

@@ -3,46 +3,34 @@ package batch.springbatch.job
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
-import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
-import org.springframework.batch.core.scope.context.ChunkContext
+import org.springframework.batch.core.launch.support.RunIdIncrementer
 import org.springframework.batch.repeat.RepeatStatus
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-/**
- * @author Rasung Ki
- */
 @Configuration
-class JobExecutionConfiguration(
+class PartitionTestConfiguration(
     private val jobBuilderFactory: JobBuilderFactory,
     private val stepBuilderFactory: StepBuilderFactory,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
     @Bean
-    fun batchJob(): Job {
-        return jobBuilderFactory["Job"]
-            .start(step1())
-            .next(step2())
-            .build()
+    fun partitionJob(
+        @Qualifier("testStep") testStep: Step
+    ): Job = jobBuilderFactory["partitionJob"]
+        .incrementer(RunIdIncrementer())
+        .start(testStep)
+        .build()
+
+    @Bean
+    fun testStep(): Step {
+        return stepBuilderFactory["testStep"].tasklet { contribution, chunkContext ->
+            log.info("===== test =====")
+            RepeatStatus.FINISHED
+        }.build()
     }
-
-    @Bean
-    fun step1(): Step = stepBuilderFactory["step1"]
-        .tasklet {  _: StepContribution, _: ChunkContext ->
-            log.info("step1 has executed")
-
-            RepeatStatus.FINISHED
-        }.build()
-
-    @Bean
-    fun step2(): Step = stepBuilderFactory["step1"]
-        .tasklet { _: StepContribution, _: ChunkContext ->
-            log.info("step2 has executed")
-
-            RepeatStatus.FINISHED
-        }.build()
-
 }
